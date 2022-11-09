@@ -1,10 +1,11 @@
-# Import serialPy library and pynput keyboard library
+# Import sys for Serial Port Notifer arguments and serialPy library and pynput keyboard library
+import sys
 import serial
 from pynput.keyboard import Key, Controller
-
-# Establish Serial Port, Baud Rate, and # data bits, and initialize keyboard 
-ser = serial.Serial('COM5', 1200, 8)
 keyboard = Controller()
+# Establish Serial Port, Baud Rate, and # data bits, and initialize keyboard 
+print(f"-- Kaypro 2000 Keyboard Driver --\n Andy Bennett 2022\n Initializing Serial Port on {sys.argv[1]} at 1200 Baud and 8 Data Bits")
+ser = serial.Serial(f'{sys.argv[1]}', 1200, 8)
 
 # Kaypro 2000 Keyboard has an ID for each key, 
 # this dictionary tells us what letter or function
@@ -31,10 +32,6 @@ keyTranslation = {
     # Fifth Row
     '56': [Key.alt, False], '58': [Key.caps_lock, False], '43': ['\\', False], '57': [Key.space, False], '77': [Key.cmd, False],
     '74': [Key.left, False], '75': [Key.down, False], '76': [Key.right, False],
-    # specially reassigned keys, comment out for normal behavior. These override earlier definitions.
-    
-        # Not implemented yet. Still debating whether I need this.
-
     }
 
 while True:
@@ -43,9 +40,11 @@ while True:
     # this if/else conditional updates whether the button is currently pressed 
     # and presses or releases that key accordingly.
     if key < 128:
+        print(f"{keyTranslation[f'{key}'][0]} pressed")
         keyTranslation[f'{key}'][1] = True
         keyboard.press(keyTranslation[f'{key}'][0])
     else:
+        print(f"{keyTranslation[f'{key-128}'][0]} released")
         keyTranslation[f'{key-128}'][1] = False
         keyboard.release(keyTranslation[f'{key-128}'][0])
     
