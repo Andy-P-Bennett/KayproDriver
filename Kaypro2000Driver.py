@@ -3,7 +3,7 @@ import serial
 from pynput.keyboard import Key, Controller
 
 # Establish Serial Port, Baud Rate, and # data bits, and initialize keyboard 
-ser = serial.Serial('COM5', 1200, 7)
+ser = serial.Serial('COM5', 1200, 8)
 keyboard = Controller()
 
 # Kaypro 2000 Keyboard has an ID for each key, 
@@ -33,20 +33,20 @@ keyTranslation = {
     '74': [Key.left, False], '75': [Key.down, False], '76': [Key.right, False],
     # specially reassigned keys, comment out for normal behavior. These override earlier definitions.
     
+        # Not implemented yet. Still debating whether I need this.
+
     }
 
 while True:
     # looks at the first byte in the serial buffer
     key = ord(ser.read())
-
     # this if/else conditional updates whether the button is currently pressed 
     # and presses or releases that key accordingly.
-    if not keyTranslation[f'{key}'][1]:
+    if key < 128:
         keyTranslation[f'{key}'][1] = True
         keyboard.press(keyTranslation[f'{key}'][0])
     else:
-        keyTranslation[f'{key}'][1] = False
-        keyboard.release(keyTranslation[f'{key}'][0])
-    print(keyTranslation[f'{key}'])
+        keyTranslation[f'{key-128}'][1] = False
+        keyboard.release(keyTranslation[f'{key-128}'][0])
     
 
